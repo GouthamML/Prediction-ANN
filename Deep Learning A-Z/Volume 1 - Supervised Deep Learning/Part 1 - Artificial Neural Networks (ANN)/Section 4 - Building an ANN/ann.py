@@ -56,6 +56,12 @@ classifier.fit(X_train, Y_train, batch_size = 10, nb_epoch = 100)
 y_pred = classifier.predict(X_test)
 y_pred = (y_pred > 0.5)
 
+#predecting with the model
+new_pred = np.array([[0.0, 0.0, 600, 1, 40, 3, 60000, 2, 1, 1, 50000]])
+trans = sc_X.transform(new_pred)
+prediction = classifier.predict(trans)
+prediction = (prediction > 0.5)
+
 #making confusion matrix
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(Y_test, y_pred)
