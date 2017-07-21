@@ -66,3 +66,5 @@ prediction = (prediction > 0.5)
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(Y_test, y_pred)
 
+#tried on different hosts
+
