@@ -34,16 +34,18 @@ X_test = sc_X.transform(X_test)
 import keras
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.layers import Dropout
 
 #intializing ANN
 classifier = Sequential()
 
 #Adding input layer and first hidden layer
 classifier.add(Dense(output_dim = 6, init = 'uniform', activation = 'relu', input_dim=11 ))
+classifier.add(Dropout(rate = 0.1))
 
 #second layer
 classifier.add(Dense(output_dim = 6, init = 'uniform', activation = 'relu'))
-
+classifier.add(Dropout(rate = 0.1))
 #output layer
 classifier.add(Dense(output_dim = 1, init = 'uniform', activation = 'sigmoid'))
 
@@ -85,5 +87,47 @@ def loop_classifer():
 main_classifier = KerasClassifier(build_fn = loop_classifer, batch_size = 10, nb_epoch = 100)
 accuracies = cross_val_score(estimator = main_classifier, X = X_train, y = Y_train, cv = 10)
 mean = accuracies.mean()
+
+#Paramater tuning of this ANN
+from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.model_selection import GridSearchCV
+from keras.models import Sequential
+from keras.layers import Dense
+def tuning_classifier(best_opt):
+    classifier = Sequential()
+    classifier.add(Dense(output_dim = 6, init = 'uniform', activation = 'relu', input_dim = 11))
+    classifier.add(Dense(output_dim = 6, init = 'uniform', activation = 'relu'))
+    classifier.add(Dense(output_dim = 1, init = 'uniform', activation = 'sigmoid'))
+    classifier.compile(optimizer = best_opt, loss = 'binary_crossentropy', metrics = ['accuracy'])
+    return classifier
+
+main_classifier = KerasClassifier(build_fn = tuning_classifier)
+hyper_params = {'batch_size':[25,32],
+                'nb_epoch':[100,500],
+                'best_opt':['adam','rmsprop']}
+grid_search = GridSearchCV(estimator = main_classifier, param_grid = hyper_params, scoring = 'accuracy', cv=10)
+grid_search = grid_search.fit(X_train, Y_train)
+best_para = grid_search.best_params_
+best_accuracy = grid_search.best_score_
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
