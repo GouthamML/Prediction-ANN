@@ -56,6 +56,7 @@ classifier.fit(X_train, Y_train, batch_size = 10, nb_epoch = 100)
 y_pred = classifier.predict(X_test)
 y_pred = (y_pred > 0.5)
 
+
 #predecting with the model
 new_pred = np.array([[0.0, 0.0, 600, 1, 40, 3, 60000, 2, 1, 1, 50000]])
 trans = sc_X.transform(new_pred)
@@ -66,5 +67,23 @@ prediction = (prediction > 0.5)
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(Y_test, y_pred)
 
-#tried on different hosts
+#evaluating this ANN
+from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.model_selection import cross_val_score
+
+def loop_classifer():
+    classifier = Sequential()
+#Adding input layer and first hidden layer
+    classifier.add(Dense(output_dim = 6, init = 'uniform', activation = 'relu', input_dim=11 ))
+#second layer
+    classifier.add(Dense(output_dim = 6, init = 'uniform', activation = 'relu'))
+#output layer
+    classifier.add(Dense(output_dim = 1, init = 'uniform', activation = 'sigmoid'))
+#compiling ANN
+    classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
+    return classifier
+main_classifier = KerasClassifier(build_fn = loop_classifer, batch_size = 10, nb_epoch = 100)
+accuracies = cross_val_score(estimator = main_classifier, X = X_train, y = Y_train, cv = 10)
+mean = accuracies.mean()
+
 
