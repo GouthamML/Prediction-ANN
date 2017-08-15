@@ -102,8 +102,8 @@ def tuning_classifier(best_opt):
     return classifier
 
 main_classifier = KerasClassifier(build_fn = tuning_classifier)
-hyper_params = {'batch_size':[25,32],
-                'nb_epoch':[100,500],
+hyper_params = {'batch_size':[20,25,32],
+                'nb_epoch':[100,500,600],
                 'best_opt':['adam','rmsprop']}
 grid_search = GridSearchCV(estimator = main_classifier, param_grid = hyper_params, scoring = 'accuracy', cv=10)
 grid_search = grid_search.fit(X_train, Y_train)
